@@ -1,24 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function App() {
 
-  const [ seconds, setSeconds ] = useState(0)
-  const [ minutes, setMinutes ] = useState(0)
-  const [ hours, setHours ] = useState(0)
+  const [ time, setTime ] = useState(0)
+  const [ isRun, setIsRun ] = useState(false)
 
-  const handleStart = () => {
-    setInterval(() => {
-      setSeconds(seconds + 1)
-      console.log(seconds)
-    }, 1000)
-  }
+  useEffect(() => {
+    let interval = 0
+
+    if(isRun){
+      interval = setInterval(() => {
+        setTime((current) => current + 1)
+      }, 1000)
+    } else {
+      clearInterval(interval)
+    }
+
+    return () => clearInterval(interval)
+  }, [isRun])
 
   return (
     <div>
-      <div>{`${hours}:${minutes}:${seconds}`}</div>
-      <div><button onClick={handleStart}>Start</button></div>
-      <div><button>Pause</button></div>
-      <div><button>Clean</button></div>
+      <span>{('0' + Math.floor((time / 3600) % 60)).slice(-2)} :</span>
+      <span>{('0' + Math.floor((time / 60) % 60)).slice(-2)} :</span>
+      <span>{('0' + Math.floor(time % 60)).slice(-2)}</span>
+
+
+
+      <div><button onClick={() => setIsRun(true)}>Start</button></div>
+      <div><button onClick={() => setIsRun(false)}>Pause</button></div>
+      <div><button onClick={() => setTime(0)}>Reset</button></div>
     </div>
   )
 }
